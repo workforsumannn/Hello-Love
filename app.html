@@ -1,0 +1,871 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#0a0510">
+<title>HELLO LOVE — Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&family=Orbitron:wght@400;500;700;900&family=Cormorant+Garamond:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg-0: #0a0510;
+  --bg-1: #12081c;
+  --panel: rgba(18, 8, 28, 0.85);
+  --border: rgba(255, 60, 130, 0.18);
+  --pink: #ff3c82;
+  --pink-2: #ff7bac;
+  --purple: #b537f2;
+  --cyan: #00e5ff;
+  --amber: #ffb400;
+  --red: #ff2d55;
+  --text: #f5e6f0;
+  --text-2: #a888a8;
+  --text-3: #6b4a6b;
+  --mono: 'JetBrains Mono', monospace;
+  --disp: 'Orbitron', sans-serif;
+  --serif: 'Cormorant Garamond', serif;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+html, body {
+  min-height: 100vh;
+  background: var(--bg-0);
+  color: var(--text);
+  font-family: var(--mono);
+  overflow-x: hidden;
+}
+.bg-glow {
+  position: fixed; inset: 0; z-index: 0; pointer-events: none;
+  background:
+    radial-gradient(circle at 20% 20%, rgba(255, 60, 130, 0.12), transparent 45%),
+    radial-gradient(circle at 80% 80%, rgba(181, 55, 242, 0.12), transparent 45%),
+    radial-gradient(circle at 50% 50%, rgba(0, 229, 255, 0.05), transparent 60%);
+}
+.bg-grid {
+  position: fixed; inset: 0; z-index: 0; pointer-events: none;
+  background-image:
+    linear-gradient(rgba(255, 60, 130, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 60, 130, 0.04) 1px, transparent 1px);
+  background-size: 50px 50px;
+  mask-image: radial-gradient(ellipse at center, black 30%, transparent 90%);
+}
+.app {
+  position: relative; z-index: 10;
+  min-height: 100vh;
+  padding: 16px;
+  display: flex; flex-direction: column; align-items: center;
+}
+.topbar {
+  width: 100%; max-width: 720px;
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 12px 16px;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  backdrop-filter: blur(20px);
+  margin-bottom: 16px;
+}
+.brand { display: flex; align-items: center; gap: 10px; }
+.brand-icon {
+  width: 32px; height: 32px;
+  color: var(--pink);
+  filter: drop-shadow(0 0 8px var(--pink));
+  animation: beat 1.5s ease-in-out infinite;
+}
+@keyframes beat {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.15); }
+}
+.brand-text h1 {
+  font-family: var(--disp);
+  font-size: 14px; font-weight: 900;
+  letter-spacing: 2.5px;
+  color: var(--pink);
+  text-shadow: 0 0 12px rgba(255, 60, 130, 0.7);
+  line-height: 1;
+}
+.brand-text h1 span { color: var(--cyan); }
+.brand-text p {
+  font-size: 7.5px; color: var(--text-3);
+  letter-spacing: 2px; margin-top: 3px;
+  font-weight: 600;
+}
+.trial-chip {
+  display: flex; align-items: center; gap: 8px;
+  padding: 7px 14px;
+  background: rgba(0, 229, 255, 0.06);
+  border: 1px solid rgba(0, 229, 255, 0.3);
+  border-radius: 20px;
+  font-size: 10px;
+  letter-spacing: 1.5px;
+  font-weight: 700;
+  color: var(--cyan);
+  text-shadow: 0 0 6px rgba(0, 229, 255, 0.5);
+}
+.trial-chip .t-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--cyan);
+  box-shadow: 0 0 8px var(--cyan);
+  animation: pulse 1.5s infinite;
+}
+@keyframes pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.5; transform: scale(1.3); }
+}
+.trial-chip.warning {
+  background: rgba(255, 180, 0, 0.08);
+  border-color: rgba(255, 180, 0, 0.4);
+  color: var(--amber);
+}
+.trial-chip.warning .t-dot { background: var(--amber); box-shadow: 0 0 8px var(--amber); }
+.trial-chip.expired {
+  background: rgba(255, 45, 85, 0.08);
+  border-color: rgba(255, 45, 85, 0.4);
+  color: var(--red);
+}
+.trial-chip.expired .t-dot { background: var(--red); box-shadow: 0 0 8px var(--red); animation: none; }
+
+.user-bar {
+  width: 100%; max-width: 720px;
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 10px 16px;
+  background: rgba(255, 60, 130, 0.04);
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  margin-bottom: 16px;
+  font-size: 11px;
+  letter-spacing: 1px;
+}
+.user-bar .u-name { color: var(--pink); font-weight: 700; text-shadow: 0 0 6px rgba(255, 60, 130, 0.5); }
+.logout-btn {
+  padding: 6px 14px;
+  background: rgba(255, 45, 85, 0.08);
+  border: 1px solid rgba(255, 45, 85, 0.35);
+  border-radius: 3px;
+  color: var(--red);
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  cursor: pointer;
+  transition: all 0.25s;
+}
+.logout-btn:hover { background: var(--red); color: #fff; }
+
+.card {
+  position: relative;
+  width: 100%; max-width: 720px;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 32px 24px 24px;
+  backdrop-filter: blur(24px);
+  box-shadow: 0 0 60px rgba(255, 60, 130, 0.1), 0 20px 60px rgba(0, 0, 0, 0.6);
+  margin-bottom: 16px;
+}
+.card::before, .card::after {
+  content: ''; position: absolute;
+  width: 22px; height: 22px;
+  border: 2px solid var(--pink);
+  pointer-events: none;
+  filter: drop-shadow(0 0 6px var(--pink));
+}
+.card::before { top: -1px; left: -1px; border-right: none; border-bottom: none; }
+.card::after { bottom: -1px; right: -1px; border-left: none; border-top: none; }
+
+.hero { text-align: center; margin-bottom: 24px; }
+.hero-icon {
+  width: 60px; height: 60px;
+  margin: 0 auto 12px;
+  color: var(--pink);
+  filter: drop-shadow(0 0 16px var(--pink));
+  animation: beat 1.5s ease-in-out infinite;
+}
+.hero h2 {
+  font-family: var(--disp);
+  font-size: 22px;
+  font-weight: 900;
+  letter-spacing: 2px;
+  color: var(--text);
+  line-height: 1.2;
+  margin-bottom: 8px;
+}
+.hero h2 em { font-style: normal; color: var(--pink); text-shadow: 0 0 14px rgba(255, 60, 130, 0.7); }
+.hero p {
+  font-family: var(--serif);
+  font-size: 14px;
+  font-style: italic;
+  color: var(--text-2);
+  line-height: 1.5;
+  max-width: 380px;
+  margin: 0 auto;
+}
+
+.field { margin-bottom: 16px; }
+.field label {
+  display: block;
+  font-size: 9px; color: var(--text-3);
+  letter-spacing: 2px; margin-bottom: 7px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+.input-wrap { position: relative; display: flex; align-items: center; }
+.input-icon {
+  position: absolute; left: 14px;
+  width: 16px; height: 16px;
+  color: var(--pink-2);
+  pointer-events: none; z-index: 2;
+}
+.field input {
+  width: 100%;
+  padding: 14px 16px 14px 42px;
+  background: rgba(255, 60, 130, 0.04);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  color: var(--text);
+  font-family: var(--mono);
+  font-size: 14px;
+  outline: none;
+  transition: all 0.25s;
+}
+.field input:focus {
+  border-color: var(--pink);
+  background: rgba(255, 60, 130, 0.08);
+  box-shadow: 0 0 0 3px rgba(255, 60, 130, 0.1), 0 0 20px rgba(255, 60, 130, 0.3);
+}
+.field input::placeholder { color: var(--text-3); font-style: italic; font-size: 13px; }
+
+.btn-main {
+  position: relative;
+  width: 100%;
+  padding: 15px;
+  margin-top: 4px;
+  border-radius: 5px;
+  background: linear-gradient(135deg, rgba(255, 60, 130, 0.15), rgba(181, 55, 242, 0.1));
+  border: 1px solid var(--pink);
+  color: var(--pink);
+  font-family: var(--disp);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 3px;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  gap: 12px;
+  overflow: hidden;
+  transition: all 0.3s;
+  box-shadow: 0 0 25px rgba(255, 60, 130, 0.2), inset 0 0 25px rgba(255, 60, 130, 0.04);
+  touch-action: manipulation;
+}
+.btn-main svg { width: 15px; height: 15px; }
+.btn-main:hover:not(:disabled) { background: var(--pink); color: var(--bg-0); box-shadow: 0 0 40px var(--pink); }
+.btn-main:active:not(:disabled) { transform: scale(0.98); }
+.btn-main:disabled { opacity: 0.4; cursor: not-allowed; }
+.scan {
+  position: absolute;
+  top: 0; left: -100%;
+  width: 100%; height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 60, 130, 0.6), transparent);
+  animation: scanBtn 3s infinite;
+}
+@keyframes scanBtn {
+  0% { left: -100%; }
+  60%, 100% { left: 100%; }
+}
+
+/* SCREENS */
+.screen { display: none; }
+.screen.active { display: block; }
+
+/* LOADING */
+.loading { text-align: center; padding: 30px 20px; }
+.spinner {
+  width: 50px; height: 50px;
+  margin: 0 auto 18px;
+  border: 3px solid rgba(255, 60, 130, 0.15);
+  border-top-color: var(--pink);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  box-shadow: 0 0 25px rgba(255, 60, 130, 0.3);
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.loading-text {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 2px;
+  color: var(--pink);
+  text-transform: uppercase;
+  animation: pulse 1.5s infinite;
+}
+
+/* RESULT */
+.result-head { text-align: center; margin-bottom: 22px; }
+.result-head h2 {
+  font-family: var(--disp);
+  font-size: 18px;
+  font-weight: 900;
+  letter-spacing: 3px;
+  color: var(--pink);
+  text-shadow: 0 0 14px rgba(255, 60, 130, 0.6);
+  margin-bottom: 6px;
+}
+.result-head p {
+  font-family: var(--serif);
+  font-size: 14px;
+  font-style: italic;
+  color: var(--text-2);
+}
+.score-wrap { text-align: center; margin-bottom: 22px; }
+.score-circle { position: relative; width: 180px; height: 180px; margin: 0 auto 16px; }
+.score-svg { transform: rotate(-90deg); filter: drop-shadow(0 0 14px var(--pink)); }
+.score-track { fill: none; stroke: rgba(255, 60, 130, 0.1); stroke-width: 10; }
+.score-fill {
+  fill: none;
+  stroke: url(#scoreGrad);
+  stroke-width: 10;
+  stroke-linecap: round;
+  stroke-dasharray: 502;
+  stroke-dashoffset: 502;
+  transition: stroke-dashoffset 2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.score-text {
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+}
+.score-num {
+  font-family: var(--disp);
+  font-size: 42px;
+  font-weight: 900;
+  color: var(--pink);
+  text-shadow: 0 0 20px rgba(255, 60, 130, 0.8);
+  line-height: 1;
+}
+.score-pct {
+  font-size: 14px;
+  color: var(--text-2);
+  margin-top: 4px;
+  letter-spacing: 2px;
+}
+.score-label {
+  font-family: var(--disp);
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 3px;
+  color: var(--text);
+  margin-bottom: 6px;
+}
+.score-tagline {
+  font-family: var(--serif);
+  font-size: 15px;
+  font-style: italic;
+  color: var(--text-2);
+  padding: 0 20px;
+}
+
+.names-pair {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  padding: 18px;
+  background: rgba(255, 60, 130, 0.04);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  margin-bottom: 20px;
+}
+.name-box {
+  font-family: var(--serif);
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--text);
+  text-align: center;
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.heart-icon {
+  width: 28px; height: 28px;
+  color: var(--pink);
+  filter: drop-shadow(0 0 10px var(--pink));
+  flex-shrink: 0;
+  animation: beat 1.2s infinite;
+}
+
+.cert-info {
+  padding: 16px;
+  background: rgba(0, 229, 255, 0.03);
+  border: 1px solid rgba(0, 229, 255, 0.15);
+  border-radius: 5px;
+  margin-bottom: 20px;
+}
+.cert-info .row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 11px;
+  padding: 7px 0;
+  border-bottom: 1px dashed rgba(0, 229, 255, 0.12);
+  letter-spacing: 1px;
+}
+.cert-info .row:last-child { border-bottom: none; }
+.cert-info .row .k { color: var(--text-3); text-transform: uppercase; font-weight: 600; font-size: 10px; }
+.cert-info .row .v { color: var(--cyan); font-weight: 700; text-shadow: 0 0 6px rgba(0, 229, 255, 0.4); }
+
+.action-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-top: 18px;
+}
+.btn-ghost {
+  padding: 12px;
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  color: var(--text-2);
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  gap: 8px;
+  transition: all 0.25s;
+  text-transform: uppercase;
+}
+.btn-ghost svg { width: 13px; height: 13px; }
+.btn-ghost:hover {
+  border-color: var(--pink);
+  color: var(--pink);
+  background: rgba(255, 60, 130, 0.06);
+}
+
+/* EXPIRED */
+.expired-screen { text-align: center; padding: 40px 20px; }
+.expired-icon {
+  width: 70px; height: 70px;
+  margin: 0 auto 20px;
+  color: var(--red);
+  filter: drop-shadow(0 0 16px var(--red));
+}
+.expired-screen h2 {
+  font-family: var(--disp);
+  font-size: 22px;
+  font-weight: 900;
+  color: var(--red);
+  letter-spacing: 3px;
+  margin-bottom: 12px;
+  text-shadow: 0 0 14px rgba(255, 45, 85, 0.6);
+}
+.expired-screen p {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 15px;
+  color: var(--text-2);
+  margin-bottom: 24px;
+  line-height: 1.6;
+}
+
+@media (max-width: 500px) {
+  .app { padding: 12px; }
+  .topbar { padding: 10px 12px; }
+  .brand-text h1 { font-size: 12px; letter-spacing: 2px; }
+  .brand-text p { font-size: 7px; }
+  .trial-chip { padding: 5px 10px; font-size: 9px; letter-spacing: 1px; }
+  .user-bar { padding: 8px 12px; font-size: 10px; }
+  .card { padding: 24px 16px 20px; }
+  .hero h2 { font-size: 19px; }
+  .hero p { font-size: 13px; }
+  .score-circle { width: 150px; height: 150px; }
+  .score-svg { width: 150px; height: 150px; }
+  .score-num { font-size: 36px; }
+  .name-box { font-size: 15px; }
+  .action-row { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<div class="bg-glow"></div>
+<div class="bg-grid"></div>
+
+<div class="app">
+
+  <!-- TOPBAR -->
+  <header class="topbar">
+    <div class="brand">
+      <svg class="brand-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" fill="currentColor"/>
+      </svg>
+      <div class="brand-text">
+        <h1>HELLO<span>·</span>LOVE</h1>
+        <p>LOVE INSURANCE</p>
+      </div>
+    </div>
+    <div class="trial-chip" id="trialChip">
+      <span class="t-dot"></span>
+      <span id="trialText">30 DAYS</span>
+    </div>
+  </header>
+
+  <!-- USER BAR -->
+  <div class="user-bar">
+    <div>Welcome, <span class="u-name" id="userName">User</span></div>
+    <button class="logout-btn" onclick="logout()">LOGOUT</button>
+  </div>
+
+  <!-- MAIN CARD -->
+  <div class="card">
+
+    <!-- CALCULATOR SCREEN -->
+    <div class="screen active" id="screenCalculator">
+      <div class="hero">
+        <svg class="hero-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" fill="currentColor"/>
+        </svg>
+        <h2>Is Your Love <em>Insured?</em></h2>
+        <p>Enter two names and discover your compatibility score.</p>
+      </div>
+
+      <div class="field">
+        <label>Your Name</label>
+        <div class="input-wrap">
+          <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+            <circle cx="12" cy="7" r="4"/>
+          </svg>
+          <input type="text" id="name1" placeholder="Enter your name" maxlength="20" autocomplete="off"/>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Partner Name</label>
+        <div class="input-wrap">
+          <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+            <circle cx="12" cy="7" r="4"/>
+          </svg>
+          <input type="text" id="name2" placeholder="Enter partner's name" maxlength="20" autocomplete="off"/>
+        </div>
+      </div>
+
+      <button class="btn-main" id="calcBtn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" fill="currentColor"/>
+        </svg>
+        <span>CALCULATE LOVE SCORE</span>
+        <span class="scan"></span>
+      </button>
+    </div>
+
+    <!-- LOADING SCREEN -->
+    <div class="screen" id="screenLoading">
+      <div class="loading">
+        <div class="spinner"></div>
+        <div class="loading-text" id="loadingText">Analyzing heartbeats...</div>
+      </div>
+    </div>
+
+    <!-- RESULT SCREEN -->
+    <div class="screen" id="screenResult">
+      <div class="result-head">
+        <h2>YOUR LOVE SCORE</h2>
+        <p id="resultTagline">Love is in the air...</p>
+      </div>
+
+      <div class="score-wrap">
+        <div class="score-circle">
+          <svg class="score-svg" width="180" height="180" viewBox="0 0 180 180">
+            <defs>
+              <linearGradient id="scoreGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#ff3c82"/>
+                <stop offset="50%" stop-color="#b537f2"/>
+                <stop offset="100%" stop-color="#00e5ff"/>
+              </linearGradient>
+            </defs>
+            <circle class="score-track" cx="90" cy="90" r="80"/>
+            <circle class="score-fill" id="scoreCircle" cx="90" cy="90" r="80"/>
+          </svg>
+          <div class="score-text">
+            <div class="score-num" id="scoreNum">0</div>
+            <div class="score-pct">%</div>
+          </div>
+        </div>
+        <div class="score-label" id="scoreLabel">CALCULATING</div>
+        <div class="score-tagline" id="scoreTagline">Please wait...</div>
+      </div>
+
+      <div class="names-pair">
+        <div class="name-box" id="displayName1">-</div>
+        <svg class="heart-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" fill="currentColor"/>
+        </svg>
+        <div class="name-box" id="displayName2">-</div>
+      </div>
+
+      <div class="cert-info">
+        <div class="row"><span class="k">Certificate ID</span><span class="v" id="certId">-</span></div>
+        <div class="row"><span class="k">Issued On</span><span class="v" id="certIssued">-</span></div>
+        <div class="row"><span class="k">Valid Until</span><span class="v" id="certValid">-</span></div>
+        <div class="row"><span class="k">Status</span><span class="v" style="color:#00ffaa;">INSURED ✓</span></div>
+      </div>
+
+      <div class="action-row">
+        <button class="btn-ghost" onclick="newCalculation()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="1 4 1 10 7 10"/>
+            <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/>
+          </svg>
+          NEW CHECK
+        </button>
+        <button class="btn-ghost" onclick="shareResult()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="18" cy="5" r="3"/>
+            <circle cx="6" cy="12" r="3"/>
+            <circle cx="18" cy="19" r="3"/>
+            <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/>
+            <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
+          </svg>
+          SHARE
+        </button>
+      </div>
+    </div>
+
+    <!-- EXPIRED SCREEN -->
+    <div class="screen" id="screenExpired">
+      <div class="expired-screen">
+        <svg class="expired-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="3" y="11" width="18" height="11" rx="2"/>
+          <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+          <line x1="12" y1="16" x2="12" y2="16.01"/>
+        </svg>
+        <h2>TRIAL EXPIRED</h2>
+        <p>Your 30-day free trial has ended.<br>Renew to continue your love journey.</p>
+        <button class="btn-main" onclick="renewTrial()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <polyline points="23 4 23 10 17 10"/>
+            <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/>
+          </svg>
+          <span>RENEW NOW</span>
+          <span class="scan"></span>
+        </button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+/* ==========================================================
+   HELLO LOVE — Main App
+   ========================================================== */
+
+const SESSION_KEY = 'hl_session';
+const USERS_KEY = 'hl_users';
+const TRIAL_DAYS = 30;
+
+let currentUser = null;
+
+/* ========== INIT ========== */
+function init() {
+  const raw = localStorage.getItem(SESSION_KEY);
+  if (!raw) { window.location.replace('index.html'); return; }
+  try {
+    const session = JSON.parse(raw);
+    if (!session || !session.token) { window.location.replace('index.html'); return; }
+    currentUser = session;
+    document.getElementById('userName').innerText = session.name || 'User';
+    checkTrial();
+    setInterval(checkTrial, 60000); // check every minute
+  } catch(e) {
+    window.location.replace('index.html');
+  }
+}
+
+/* ========== TRIAL CHECK ========== */
+function checkTrial() {
+  const users = JSON.parse(localStorage.getItem(USERS_KEY) || '[]');
+  const user = users.find(u => u.email === currentUser.email);
+  if (!user) return;
+
+  const now = Date.now();
+  const remaining = user.trialEnd - now;
+  const daysLeft = Math.ceil(remaining / (24 * 60 * 60 * 1000));
+
+  const chip = document.getElementById('trialChip');
+  const text = document.getElementById('trialText');
+
+  if (remaining <= 0) {
+    chip.className = 'trial-chip expired';
+    text.innerText = 'EXPIRED';
+    showScreen('screenExpired');
+  } else if (daysLeft <= 5) {
+    chip.className = 'trial-chip warning';
+    text.innerText = daysLeft + ' DAYS LEFT';
+    showScreen('screenCalculator');
+  } else {
+    chip.className = 'trial-chip';
+    text.innerText = daysLeft + ' DAYS LEFT';
+    showScreen('screenCalculator');
+  }
+}
+
+/* ========== SCREEN NAV ========== */
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  const el = document.getElementById(id);
+  if (el) el.classList.add('active');
+}
+
+/* ========== CALCULATE ========== */
+document.getElementById('calcBtn').addEventListener('click', async () => {
+  const n1 = document.getElementById('name1').value.trim();
+  const n2 = document.getElementById('name2').value.trim();
+
+  if (!n1 || !n2) {
+    alert('Please enter both names');
+    return;
+  }
+
+  showScreen('screenLoading');
+
+  const steps = [
+    'Analyzing heartbeats...',
+    'Reading emotional patterns...',
+    'Matching compatibility waves...',
+    'Calculating love frequency...',
+    'Generating certificate...',
+  ];
+  const loadEl = document.getElementById('loadingText');
+  for (let i = 0; i < steps.length; i++) {
+    loadEl.innerText = steps[i];
+    await sleep(700);
+  }
+
+  const score = calculateScore(n1, n2);
+  showResult(n1, n2, score);
+});
+
+/* ========== SCORE ALGORITHM ========== */
+function calculateScore(n1, n2) {
+  const combined = (n1 + n2).toLowerCase();
+  let hash = 0;
+  for (let i = 0; i < combined.length; i++) {
+    hash = ((hash << 5) - hash) + combined.charCodeAt(i);
+    hash = hash & hash;
+  }
+  const score = Math.abs(hash % 51) + 50; // 50-100
+  return score;
+}
+
+/* ========== SHOW RESULT ========== */
+function showResult(n1, n2, score) {
+  document.getElementById('displayName1').innerText = n1;
+  document.getElementById('displayName2').innerText = n2;
+
+  const circle = document.getElementById('scoreCircle');
+  const circumference = 2 * Math.PI * 80;
+  const offset = circumference - (score / 100) * circumference;
+  setTimeout(() => { circle.style.strokeDashoffset = offset; }, 100);
+
+  // Animate number
+  let current = 0;
+  const numEl = document.getElementById('scoreNum');
+  const step = score / 40;
+  const timer = setInterval(() => {
+    current += step;
+    if (current >= score) { current = score; clearInterval(timer); }
+    numEl.innerText = Math.floor(current);
+  }, 50);
+
+  // Labels
+  let label, tagline;
+  if (score >= 90) {
+    label = 'SOULMATES';
+    tagline = 'A match made in heaven. Your love is legendary.';
+  } else if (score >= 80) {
+    label = 'STRONG CONNECTION';
+    tagline = 'Your hearts beat in perfect rhythm. Beautiful!';
+  } else if (score >= 70) {
+    label = 'GREAT MATCH';
+    tagline = 'A wonderful bond with lots of potential.';
+  } else if (score >= 60) {
+    label = 'GOOD VIBES';
+    tagline = 'A promising connection — nurture it with care.';
+  } else {
+    label = 'GROWING BOND';
+    tagline = 'Every great love story starts small. Keep going!';
+  }
+
+  document.getElementById('scoreLabel').innerText = label;
+  document.getElementById('scoreTagline').innerText = tagline;
+  document.getElementById('resultTagline').innerText = tagline;
+
+  // Certificate
+  const certId = 'HL-' + Math.random().toString(36).substring(2, 10).toUpperCase();
+  const now = new Date();
+  const validUntil = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000);
+  document.getElementById('certId').innerText = certId;
+  document.getElementById('certIssued').innerText = formatDate(now);
+  document.getElementById('certValid').innerText = formatDate(validUntil);
+
+  showScreen('screenResult');
+}
+
+/* ========== HELPERS ========== */
+function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+function formatDate(d) {
+  const day = String(d.getDate()).padStart(2, '0');
+  const m = String(d.getMonth() + 1).padStart(2, '0');
+  const y = d.getFullYear();
+  return `${day}.${m}.${y}`;
+}
+
+function newCalculation() {
+  document.getElementById('name1').value = '';
+  document.getElementById('name2').value = '';
+  document.getElementById('scoreCircle').style.strokeDashoffset = 502;
+  document.getElementById('scoreNum').innerText = '0';
+  showScreen('screenCalculator');
+}
+
+function shareResult() {
+  const n1 = document.getElementById('displayName1').innerText;
+  const n2 = document.getElementById('displayName2').innerText;
+  const score = document.getElementById('scoreNum').innerText;
+  const text = `${n1} ❤ ${n2} = ${score}% Love Score! Check yours at HELLO LOVE 💕`;
+
+  if (navigator.share) {
+    navigator.share({ title: 'HELLO LOVE', text }).catch(() => {});
+  } else {
+    navigator.clipboard.writeText(text).then(() => {
+      alert('Copied to clipboard!');
+    }).catch(() => {
+      alert(text);
+    });
+  }
+}
+
+function renewTrial() {
+  const users = JSON.parse(localStorage.getItem(USERS_KEY) || '[]');
+  const idx = users.findIndex(u => u.email === currentUser.email);
+  if (idx === -1) return;
+
+  // Extend by 30 days (demo)
+  users[idx].trialEnd = Date.now() + (TRIAL_DAYS * 24 * 60 * 60 * 1000);
+  localStorage.setItem(USERS_KEY, JSON.stringify(users));
+  checkTrial();
+  alert('Trial renewed for 30 more days! (Demo)');
+}
+
+function logout() {
+  localStorage.removeItem(SESSION_KEY);
+  window.location.replace('index.html');
+}
+
+/* ========== START ========== */
+init();
+</script>
+</body>
+</html>
